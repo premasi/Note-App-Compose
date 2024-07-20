@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Note App Compose</string>
+    <string name="icon_top_bar">Icon top bar</string>
 </resources>
