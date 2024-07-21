@@ -6,7 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.rakarguntara.noteappcompose.data.DummyDataNotesModel
+import com.rakarguntara.noteappcompose.models.NotesModel
 import com.rakarguntara.noteappcompose.screens.NoteScreens
 import com.rakarguntara.noteappcompose.ui.theme.NoteAppComposeTheme
 
@@ -17,7 +21,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoteAppComposeTheme {
                 Surface {
-                    NoteScreens(emptyList(), {}, {})
+                    val list = remember { mutableStateListOf<NotesModel>() }
+                    NoteScreens(list, {
+                        list.add(it)
+                    }, {
+                        list.remove(it)
+                    })
                 }
             }
         }
@@ -30,6 +39,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     NoteAppComposeTheme {
-        NoteScreens(emptyList(), {}, {})
+        NoteScreens(DummyDataNotesModel().loadNotes(), {}, {})
     }
 }
