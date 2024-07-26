@@ -1,9 +1,7 @@
-import org.jetbrains.kotlin.fir.declarations.builder.buildScript
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
 
@@ -43,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.2"
     }
     packaging {
         resources {
@@ -53,29 +51,26 @@ android {
 }
 
 dependencies {
-    //hilt dagger
-    val hilt_version = "2.44"
+    // Dagger Hilt
+    val hilt_version = "2.46"
     implementation("com.google.dagger:hilt-android:$hilt_version")
-    ksp("com.google.dagger:hilt-compiler:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
-    //room
+    // Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version") // Add Room KTX for coroutines
+    kapt("androidx.room:room-compiler:$room_version")
 
-    //kapt
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-
-    //viewModel
+    // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
 
-    //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.9")
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
-
+    // AndroidX Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -84,6 +79,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,4 +88,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }

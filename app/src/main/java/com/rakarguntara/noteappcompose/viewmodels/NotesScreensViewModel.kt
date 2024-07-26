@@ -1,26 +1,46 @@
 package com.rakarguntara.noteappcompose.viewmodels
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.rakarguntara.noteappcompose.data.DummyDataNotesModel
+import androidx.lifecycle.viewModelScope
 import com.rakarguntara.noteappcompose.models.NotesModel
+import com.rakarguntara.noteappcompose.repository.NotesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NotesScreensViewModel : ViewModel() {
-    private val noteList = mutableStateListOf<NotesModel>()
+@HiltViewModel
+class NotesScreensViewModel @Inject constructor(private val repository: NotesRepository) : ViewModel() {
+    private val _noteList = MutableStateFlow<List<NotesModel>>(emptyList())
+    val noteList = _noteList.asStateFlow()
 
     init {
-        noteList.addAll(DummyDataNotesModel().loadNotes())
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getAllNote().distinctUntilChanged()
+                .collect{ list ->
+                    if(list.isNotEmpty()){
+                        _noteList.value = list
+                    }
+                }
+        }
     }
 
-    fun addNoteList(notesModel: NotesModel){
-        noteList.add(notesModel)
+    fun addNoteList(notesModel: NotesModel) = viewModelScope.launch {
+        repository.addNote(notesModel)
     }
 
-    fun removeNoteList(notesModel: NotesModel){
-        noteList.remove(notesModel)
+    fun removeNoteList(notesModel: NotesModel) = viewModelScope.launch {
+        repository.deleteNote(notesModel)
     }
 
-    fun getAllNoteList(): List<NotesModel>{
-        return noteList
+    fun removeAllNoteList() = viewModelScope.launch {
+        repository.deleteAllNote()
+    }
+
+    fun updateNote(notesModel: NotesModel) = viewModelScope.launch {
+        repository.updateNote(notesModel)
     }
 }

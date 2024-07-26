@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.rakarguntara.noteappcompose.R
 import com.rakarguntara.noteappcompose.data.DummyDataNotesModel
 import com.rakarguntara.noteappcompose.models.NotesModel
+import com.rakarguntara.noteappcompose.utils.dateFormatter
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -57,7 +58,8 @@ fun NotesListItem(data: NotesModel, onItemClick: (NotesModel) -> Unit){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                Text(data.entryDate.format(DateTimeFormatter.ofPattern("EEE, d MMM")),
+                Text(
+                    dateFormatter(data.entryDate.time),
                     style = TextStyle(
                         color = Color.DarkGray,
                         fontSize = 10.sp
