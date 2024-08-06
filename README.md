@@ -4,6 +4,7 @@ Note App Compose is a simple note-taking application that implements Hilt Dagger
 ## App Overview <br />
 - Prerequisites
   - Android
+  - Minimum Sdk 26 (Android 8.0)
 
 - Installation
   - Download the APK
